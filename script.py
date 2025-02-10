@@ -9,6 +9,7 @@ from email.mime.multipart import MIMEMultipart
 # LENDO AS PLANILHAS COM PANDAS
 ws_resultados = pd.read_excel("Base Resultados de Exame.xlsx")
 ws_prestadores = pd.read_csv("Base Prestadores.csv", encoding='unicode_escape', delimiter=';')
+print('Lendo as planilhas de resultados e prestadores..\n')
 
 # FILTRANDO A "BASE RESULTADOS" UTILIZANDO SOMENTE AQUELAS SEM 'DATA RESULTADO EXAME'
 sem_data = ws_resultados[ws_resultados['Data Res. Exame'].isna()]
@@ -32,6 +33,7 @@ for _, row in ws_prestadores.iterrows():
         prestadores['Prestadora'].append(prestadora)
         prestadores['Email'].append(email)
 
+print('Mesclando dados..')
 # CRIANDO COLUNAS PARA TABELA DE PESSOAS
 pessoas = {
     "Codigo": [],
@@ -59,7 +61,7 @@ for _, resultado in sem_data.iterrows():
         cod = resultado['Código Prestador']
         nome_prestador = resultado['Nome do Prestador']
 
-        cpf = str(cpf).format("00.000.000/0000-00")
+        
     # TENTA PEGAR O CADASTRO DA PRESTADORA COM BASE NO CÓDIGO DO PRESTADOR
         try:
             index = prestadores['Codigo'].index(cod)
@@ -96,10 +98,6 @@ base_df.to_excel("Base.xlsx",index=False)
 print('Arquivo excel "Base.xlsx" gerado com sucesso!')
 print('\nEnviando emails...')
 
-# SOMENTE PARA TESTE, ARQUIVO EXCEL JÁ ESTÁ MODIFICADO
-base_df = pd.read_excel('Base.xlsx')
-
-
 # SALVANDO OS EMAILS DIFERENTES EM LISTA
 emails = []
 for email in base_df['Email']:
@@ -114,10 +112,10 @@ for prest in base_df['Prestador']:
 
 # APRESENTANDO INFORMAÇÕES SOBRE O LOGIN PARA DISPARO DOS EMAILS
 if not os.path.exists('Login.txt'):
-    print('\nPara que o envio dos emails seja bem sucedido é necessário usar um email da google! Essa versão demonstrativa do código atua com o servidor SMTP pré configurado nos servidores da Google, para enviar de um email de domínio privado é necessário possuir os dados do servidor e porta específica do email.\n')
+    print('\nPara que o envio dos emails seja bem sucedido é necessário usar um email da google! Essa versão demonstrativa do código atua com o servidor SMTP pré configurado nos servidores da Google.\nPara enviar de um email de domínio privado é necessário possuir os dados do servidor e porta específica do email.\n')
     remetente = input('Digite um gmail para fazer o disparo: ')
 
-    print('\nPara enviar os emails é necessário fazer login na conta. Por razões de privacidade e segurança a Google não permite acesso direto com os dados da conta, por isso, será necessário gerar uma senha de aplicativo para sua conta gmail. Um bloco de notas com o passo a passo está no diretório.\n')
+    print('\nPara enviar os emails é necessário fazer login na conta.\nPor razões de privacidade e segurança a Google não permite acesso direto com os dados da conta, por isso, será necessário gerar uma senha de aplicativo para sua conta gmail.\nUm bloco de notas com o passo a passo está no diretório.\n')
     senha = input('Digite a senha de app da conta para fazer o disparo: ')
 
     # SALVANDO OS DADOS DE LOGIN EM UM BLOCO DE NOTAS NO MESMO DIRETÓRIO PARA OS PRÓXIMOS USOS
